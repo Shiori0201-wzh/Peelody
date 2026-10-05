@@ -16,13 +16,16 @@ def validate_input(audio_arg):
     return input_path
 
 
-def run_separation(input_path):
+def run_separation(input_path,custom_output_dir):
     project_dir = Path(__file__).resolve().parent
     
     track_name = input_path.parent.name
     job_name = f"{track_name} - {input_path.stem}"
     
-    output_dir = project_dir/"outputs"/job_name
+    if custom_output_dir is None:
+        output_dir = project_dir/"outputs"/job_name
+    else:
+        output_dir = custom_output_dir/job_name
 
     command = [
         sys.executable,
@@ -54,15 +57,22 @@ def run_separation(input_path):
 
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python peelody.py <audio_file>")
+    if len(sys.argv) == 1 or len(sys.argv) > 3:
+        print("Usage: python peelody.py <audio_file> [<output_dir>]")
+        print("<audio_file> （必填）")
+        print("<output_dir> （选填）")
         sys.exit(1)
 
     input_path = validate_input(sys.argv[1])
 
+    if len(sys.argv) == 3:
+        custom_output_dir = Path(sys.argv[2])
+    else:
+        custom_output_dir = None
+
     print("Input accepted:", input_path.resolve())
 
-    result_dir = run_separation(input_path)
+    result_dir = run_separation(input_path,custom_output_dir)
 
     print("Separation finished.")
     print("Output directory:", result_dir)

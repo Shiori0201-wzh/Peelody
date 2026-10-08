@@ -36,8 +36,6 @@ def run_separation(input_path,custom_output_dir):
         str(output_dir),
         str(input_path),
     ]
-    print("Starting separation...")
-
     try:
         subprocess.run(
             command,
@@ -71,6 +69,8 @@ def main():
         custom_output_dir = None
 
     print("Input accepted:", input_path.resolve())
+
+    print("Starting separation...")
 
     try:
         result_dir = run_separation(input_path,custom_output_dir)

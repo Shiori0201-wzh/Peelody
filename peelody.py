@@ -7,14 +7,11 @@ def validate_input(audio_arg):
     input_path = Path(audio_arg)
 
     if not input_path.is_file():
-        print("Error: input file does not exist.")
-        sys.exit(1)
-
+        raise FileNotFoundError("input file does not exist.")
+        
     if input_path.suffix.lower() not in {".wav", ".mp3"}:
-        print("Error: Peelody V1 only supports WAV and MP3.")
-        sys.exit(1)
+        raise ValueError("Peelody V1 only supports WAV and MP3.")
     return input_path
-
 
 def run_separation(input_path,custom_output_dir):
     project_dir = Path(__file__).resolve().parent
@@ -63,8 +60,12 @@ def main():
         print("<output_dir> （选填）")
         sys.exit(1)
 
-    input_path = validate_input(sys.argv[1])
-
+    try:
+        input_path = validate_input(sys.argv[1])
+    except (FileNotFoundError,ValueError) as error:
+        print("Error:",error)
+        sys.exit(1)
+        
     if len(sys.argv) == 3:
         custom_output_dir = Path(sys.argv[2])
     else:

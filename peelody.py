@@ -70,7 +70,7 @@ def main():
 
     print("Input accepted:", input_path.resolve())
 
-    print("Starting separation..."）
+    print("Starting separation...")
 
     try:
         result_dir = run_separation(input_path,custom_output_dir)

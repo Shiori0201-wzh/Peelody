@@ -45,9 +45,8 @@ def run_separation(input_path,custom_output_dir):
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
 )
-    except subprocess.CalledProcessError:
-        print("Error: audio separation failed.")
-        sys.exit(1)
+    except subprocess.CalledProcessError as error:
+        raise RuntimeError("audio separation failed.") from error
 
     result_dir = output_dir / "htdemucs" / input_path.stem
     return  result_dir
@@ -73,8 +72,12 @@ def main():
 
     print("Input accepted:", input_path.resolve())
 
-    result_dir = run_separation(input_path,custom_output_dir)
-
+    try:
+        result_dir = run_separation(input_path,custom_output_dir)
+    except RuntimeError as error:
+        print("Error:",error)
+        sys.exit(1)
+        
     print("Separation finished.")
     print("Output directory:", result_dir)
 

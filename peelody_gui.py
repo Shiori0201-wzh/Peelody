@@ -23,7 +23,7 @@ def main():
   window.mainloop()
   test_button = ttk.Button(
     window,
-    text="测试按钮"
+    text="测试按钮",
     command=on_test_click
   )
   test_button.pack(pady=10)

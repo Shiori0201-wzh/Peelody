@@ -20,13 +20,14 @@ def main():
     text="尚未操作",
   )
   title_label.pack(pady=10)
-  window.mainloop()
+ 
   test_button = ttk.Button(
     window,
     text="测试按钮",
     command=on_test_click
   )
   test_button.pack(pady=10)
+  window.mainloop()
 
 if __name__ == "__main__":
   main()

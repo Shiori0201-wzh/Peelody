@@ -16,7 +16,7 @@ def main():
     window,
     text="尚未操作",
   )
-  title_label.pack(pady=10)
+  status_label.pack(pady=10)
 
   def on_test_click():
       status_label.config(text="按钮点击成功")

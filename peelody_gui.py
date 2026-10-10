@@ -6,7 +6,7 @@ def main():
   window.geometry("500x320")
   title_label = ttk.Label(
     window,
-    text="Peelody",
+    text="Peelody Audio Separator",
     font=("Segoe UI", 22, "bold")
   )
   title_label.pack(pady=35)

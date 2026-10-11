@@ -1,5 +1,6 @@
+from pathlib import Path
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk,filedialog
   
 def main():
   window = tk.Tk()
@@ -18,17 +19,23 @@ def main():
   )
   status_label.pack(pady=10)
 
-  def on_test_click():
-      status_label.config(text="按钮点击成功")
- 
-  test_button = ttk.Button(
+  def choose_audio():
+    audio_path = filedialog.askopenfilename(
+       parent=window,
+       title="选择音频文件",
+       filetypes=[("音频文件"，"*.wav*.mp3")]
+    )
+
+    if audio_path:
+        status_label.config(text=Path(audio_path).name)
+    
+  ttk_button = ttk.Button(
     window,
-    text="测试按钮",
-    command=on_test_click
+    text="选择音频",
+    command=choose_audio
   )
   test_button.pack(pady=10)
   window.mainloop()
 
 if __name__ == "__main__":
   main()
-

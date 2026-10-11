@@ -19,6 +19,8 @@ def main():
   )
   status_label.pack(pady=10)
 
+  selected_audio_path = tk.StringVar(value="")
+  
   def choose_audio():
     audio_path = filedialog.askopenfilename(
        parent=window,
@@ -30,7 +32,8 @@ def main():
     )
 
     if audio_path:
-        status_label.config(text=Path(audio_path).name)
+      selected_audio_path.set(audio.path)
+      status_label.config(text=Path(audio_path).name)
     
   ttk_button = ttk.Button(
     window,
@@ -38,7 +41,22 @@ def main():
     command=choose_audio
   )
   ttk_button.pack(pady=10)
+
+  def check_saved_path():
+    if selected_audio_path.get():
+      print("Saved path:", selected_audio_path.get())
+    else:
+       print("No audio selected.")
+
+  check_button = ttk.Button(
+    window,
+    text="检查路径",
+    command=check_saved_path
+  )
+  check_button.pack(pady=10)
+  
   window.mainloop()
 
 if __name__ == "__main__":
   main()
+  

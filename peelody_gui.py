@@ -23,7 +23,7 @@ def main():
     audio_path = filedialog.askopenfilename(
        parent=window,
        title="选择音频文件",
-       filetypes=[("音频文件"，"*.wav*.mp3")]
+       filetypes=[("音频文件","*.wav*.mp3")]
     )
 
     if audio_path:

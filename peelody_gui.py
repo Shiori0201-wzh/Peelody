@@ -34,7 +34,7 @@ def main():
     text="选择音频",
     command=choose_audio
   )
-  test_button.pack(pady=10)
+  ttk_button.pack(pady=10)
   window.mainloop()
 
 if __name__ == "__main__":

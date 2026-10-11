@@ -32,7 +32,7 @@ def main():
     )
 
     if audio_path:
-      selected_audio_path.set(audio.path)
+      selected_audio_path.set(audio_path)
       status_label.config(text=Path(audio_path).name)
     
   ttk_button = ttk.Button(

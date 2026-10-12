@@ -70,14 +70,17 @@ def main():
   task_label.pack(pady=8)
   def worker():
     time.sleep(3)
-    task_queue.put("模拟任务完成")
+    task_queue.put(("success","模拟任务完成"))
   def check_task():
     try:
-      message=task_queue.get_nowait()
+      result_type,message = task_queue.get_nowait()
     except Empty:
       window.after(100,check_task)
       return
-    task_label.config(text=message)
+    if result_type=="success":
+      task_label.config(text=message)
+    elif result_type=="error":
+      task_label.config(text=f"任务失败:{message}")
     demo_button.config(state="normal")
 
   def start_demo():

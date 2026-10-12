@@ -1,4 +1,4 @@
-from peelody import vaildate_input
+from peelody import validate_input
 from pathlib import Path
 import tkinter as tk
 from tkinter import ttk,filedialog
@@ -49,7 +49,7 @@ def main():
       status_label.config(text="请先选择音频")
       return
     try:
-      input_path = vaildate_input(audio_arg)
+      input_path = validate_input(audio_arg)
     except(FileNotFoundError,ValueError) as error:
       status_label.config(text=f"Error:{error}")
     else:

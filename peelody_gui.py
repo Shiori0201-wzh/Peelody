@@ -68,9 +68,9 @@ def main():
   task_queue = Queue()
   task_label = ttk.Label(window,text="模拟任务未开始")
   task_label.pack(pady=8)
-  def worker():
+  def worker(input_path):
     time.sleep(3)
-    task_queue.put(("success","模拟任务完成"))
+    task_queue.put(("success",f"模拟完成:{input_path.name}"))
   def check_task():
     try:
       result_type,message = task_queue.get_nowait()
@@ -84,9 +84,22 @@ def main():
     demo_button.config(state="normal")
 
   def start_demo():
+    audio_arg = selected_audio_path.get()
+    if not audio_arg:
+      task_label.config(text="未选择音频")
+      return
+    try:
+      input_path = validate_input(audio_arg)
+    except (FileNotFoundError,ValueError) as error:
+      task_label.config(text=f"Error: {error}")
+      return
     demo_button.config(state="disabled")
     task_label.config(text="模拟任务运行中...")
-    threading.Thread(target=worker,daemon=True).start()
+    threading.Thread(
+      target=worker,
+      args=(input_path,),
+      daemon=True
+    ).start()
     window.after(100,check_task)
 
   demo_button = ttk.Button(

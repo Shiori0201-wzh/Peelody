@@ -86,7 +86,7 @@ def main():
       task_label.config(text=message)
     elif result_type=="error":
       task_label.config(text=f"任务失败:{message}")
-      task_running.set(False)
+    task_running.set(False)
     demo_button.config(state="normal")
     task_running = tk.BooleanVar(value=False)
 

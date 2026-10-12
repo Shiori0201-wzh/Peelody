@@ -46,7 +46,6 @@ def main():
     command=choose_audio
   )
   ttk_button.pack(pady=10)
-  task_running = tk.BooleanVar(value=False)
   
   def prepare_separation():
     audio_arg = selected_audio_path.get()
@@ -74,7 +73,6 @@ def main():
   def worker(input_path):
     time.sleep(3)
     task_queue.put(("success",f"模拟完成:{input_path.name}"))
-    task_running = tk.BooleanVar(value=False)
     
   def check_task():
     try:
@@ -88,7 +86,6 @@ def main():
       task_label.config(text=f"任务失败:{message}")
     task_running.set(False)
     demo_button.config(state="normal")
-    task_running = tk.BooleanVar(value=False)
 
   def start_demo():
     audio_arg = selected_audio_path.get()

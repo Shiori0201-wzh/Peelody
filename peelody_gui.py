@@ -1,7 +1,7 @@
 from peelody import validate_input
 from pathlib import Path
 import tkinter as tk
-from tkinter import ttk,filedialog
+from tkinter import ttk,filedialog,messagebox
 import threading
 import time
 from queue import Queue,Empty
@@ -24,6 +24,7 @@ def main():
   status_label.pack(pady=10)
 
   selected_audio_path = tk.StringVar(value="")
+  task_running = tk.BooleanVar(value=False)
   
   def choose_audio():
     audio_path = filedialog.askopenfilename(
@@ -45,7 +46,8 @@ def main():
     command=choose_audio
   )
   ttk_button.pack(pady=10)
-
+  task_running = tk.BooleanVar(value=False)
+  
   def prepare_separation():
     audio_arg = selected_audio_path.get()
     if not audio_arg:
@@ -68,9 +70,12 @@ def main():
   task_queue = Queue()
   task_label = ttk.Label(window,text="模拟任务未开始")
   task_label.pack(pady=8)
+  
   def worker(input_path):
     time.sleep(3)
     task_queue.put(("success",f"模拟完成:{input_path.name}"))
+    task_running = tk.BooleanVar(value=False)
+    
   def check_task():
     try:
       result_type,message = task_queue.get_nowait()
@@ -81,7 +86,9 @@ def main():
       task_label.config(text=message)
     elif result_type=="error":
       task_label.config(text=f"任务失败:{message}")
+      task_running.set(False)
     demo_button.config(state="normal")
+    task_running = tk.BooleanVar(value=False)
 
   def start_demo():
     audio_arg = selected_audio_path.get()
@@ -93,6 +100,7 @@ def main():
     except (FileNotFoundError,ValueError) as error:
       task_label.config(text=f"Error: {error}")
       return
+    task_running.set(True)
     demo_button.config(state="disabled")
     task_label.config(text="模拟任务运行中...")
     threading.Thread(
@@ -101,14 +109,24 @@ def main():
       daemon=True
     ).start()
     window.after(100,check_task)
-
+  
   demo_button = ttk.Button(
     window,
     text="模拟耗时任务",
     command=start_demo
   )
   demo_button.pack(pady=8)
-  
+
+  def on_close():
+    if task_running.get():
+      messagebox.showwarning(
+        "任务运行中",
+        "请等待当前任务完成后再关闭窗口。",
+        parent=window
+      )
+      return
+    window.destroy()
+  window.protocol("WM_DELETE_WINDOW",on_close)
   window.mainloop()
 
 if __name__ == "__main__":

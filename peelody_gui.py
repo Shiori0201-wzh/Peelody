@@ -2,11 +2,14 @@ from peelody import validate_input
 from pathlib import Path
 import tkinter as tk
 from tkinter import ttk,filedialog
+import threading
+import time
+from queue import Queue,Empty
   
 def main():
   window = tk.Tk()
   window.title("Peelody V1.1")
-  window.geometry("500x320")
+  window.geometry("500x420")
   title_label = ttk.Label(
     window,
     text="Peelody Audio Separator",
@@ -62,8 +65,35 @@ def main():
   )
   check_button.pack(pady=10)
   
+  task_queue = Queue()
+  task_label = ttk.label(window,text="模拟任务未开始")
+  task_label.pack(pady=8)
+  def worker():
+    time.sleep(3)
+    task_queue.put("模拟任务完成")
+  def check_task():
+    try:
+      message=task_queue.get_nowait()
+    except Empty:
+      window.after(100,check_task)
+      return
+    task_label.config(text=message)
+    demo_button.config(state="normal")
+
+  def start_demo():
+    demo_button.config(state="disabled")
+    task_label.config(text="模拟任务运行中...")
+    threading.Thread(target=worker,daemon=True).start()
+    window.after(100,check_task)
+
+  demo_button = ttk.Button(
+    window,
+    text="模拟耗时任务",
+    command=start_demo
+  )
+  demo_button.pack(pady=8)
+  
   window.mainloop()
 
 if __name__ == "__main__":
   main()
-  

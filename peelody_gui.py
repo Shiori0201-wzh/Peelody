@@ -1,3 +1,4 @@
+from peelody import vaildate_input
 from pathlib import Path
 import tkinter as tk
 from tkinter import ttk,filedialog
@@ -42,16 +43,22 @@ def main():
   )
   ttk_button.pack(pady=10)
 
-  def check_saved_path():
-    if selected_audio_path.get():
-      print("Saved path:", selected_audio_path.get())
+  def prepare_separation():
+    audio_arg = selected_audio_path.get()
+    if not audio_arg:
+      status_label.config(text="请先选择音频")
+      return
+    try:
+      input_path = vaildate_input(audio_arg)
+    except(FileNotFoundError,ValueError) as error:
+      status_label.config(text=f"Error:{error}")
     else:
-       print("No audio selected.")
+      status_label.config(text=f"输入检查通过:{input_path.name}")
 
   check_button = ttk.Button(
     window,
-    text="检查路径",
-    command=check_saved_path
+    text="检查输入",
+    command=prepare_separation
   )
   check_button.pack(pady=10)
   

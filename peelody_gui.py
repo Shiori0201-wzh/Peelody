@@ -66,7 +66,7 @@ def main():
   check_button.pack(pady=10)
   
   task_queue = Queue()
-  task_label = ttk.label(window,text="模拟任务未开始")
+  task_label = ttk.Label(window,text="模拟任务未开始")
   task_label.pack(pady=8)
   def worker():
     time.sleep(3)

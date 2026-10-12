@@ -70,7 +70,7 @@ def main():
   task_label.pack(pady=8)
   def worker():
     time.sleep(3)
-    task_queue.put(("success","模拟任务完成"))
+    task_queue.put(("error","模拟任务发生错误"))
   def check_task():
     try:
       result_type,message = task_queue.get_nowait()

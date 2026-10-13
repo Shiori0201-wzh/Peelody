@@ -14,7 +14,6 @@ def main():
     window,
     text="Peelody Audio Separator",
     font=("Segoe UI", 22, "bold"),
-    wraplength=440
   )
   title_label.pack(pady=35)
   
@@ -68,7 +67,12 @@ def main():
   check_button.pack(pady=10)
   
   task_queue = Queue()
-  task_label = ttk.Label(window,text="模拟任务未开始")
+  task_label = ttk.Label(
+    window,
+    text="模拟任务未开始",
+    wraplength=430,
+    justify="center"
+  )
   task_label.pack(pady=8)
   
   def worker(input_path):

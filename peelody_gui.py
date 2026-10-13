@@ -13,7 +13,7 @@ def main():
   title_label = ttk.Label(
     window,
     text="Peelody Audio Separator",
-    font=("Segoe UI", 22, "bold")，
+    font=("Segoe UI", 22, "bold"),
     wraplength=440
   )
   title_label.pack(pady=35)

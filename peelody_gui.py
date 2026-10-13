@@ -63,7 +63,7 @@ def main():
     
     if folder:
       selected_output_dir.set(folder)
-      output_label.config(text=Path(folder).name)
+      output_label.config(text=f"输出目录：{folder}")
 
   output_button=ttk.Button(
     window,
@@ -71,6 +71,17 @@ def main():
     command=choose_output_dir
   )
   output_button.pack(pady=5)
+
+  def restore_default_output():
+    selected_output_dir.set("")
+    output_label.config(text="输出目录：默认outputs")
+
+  reset_output_button=ttk.Button(
+    window,
+    text="恢复默认",
+    command=restore_default_output
+  )
+  reset_output_button.pack(pady=5)
   
   def prepare_separation():
     audio_arg = selected_audio_path.get()

@@ -1,4 +1,4 @@
-from peelody import validate_input
+from peelody import validate_input,run_separation
 from pathlib import Path
 import tkinter as tk
 from tkinter import ttk,filedialog,messagebox
@@ -13,7 +13,8 @@ def main():
   title_label = ttk.Label(
     window,
     text="Peelody Audio Separator",
-    font=("Segoe UI", 22, "bold")
+    font=("Segoe UI", 22, "bold")，
+    wraplength=440
   )
   title_label.pack(pady=35)
   
@@ -71,9 +72,13 @@ def main():
   task_label.pack(pady=8)
   
   def worker(input_path):
-    time.sleep(3)
-    task_queue.put(("success",f"模拟完成:{input_path.name}"))
-    
+    try:
+      result_dir = run_separation(input_path,None)
+    except Exception as error:
+      task_queue.put(("error",str(error)))
+    else:
+      task_queue.put(("success",str(result_dir)))
+      
   def check_task():
     try:
       result_type,message = task_queue.get_nowait()
@@ -81,10 +86,12 @@ def main():
       window.after(100,check_task)
       return
     if result_type=="success":
-      task_label.config(text=message)
+      task_label.config(text=f"分离完成 输出目录为:{message}")
     elif result_type=="error":
-      task_label.config(text=f"任务失败:{message}")
+      task_label.config(text=f"分离失败:{message}")
     task_running.set(False)
+    ttk_button.config(state="normal")
+    check_button.config(state="normal")
     demo_button.config(state="normal")
 
   def start_demo():
@@ -98,18 +105,20 @@ def main():
       task_label.config(text=f"Error: {error}")
       return
     task_running.set(True)
+    ttk_button.config(state="disabled")
+    check_button.config(state="disabled")
     demo_button.config(state="disabled")
-    task_label.config(text="模拟任务运行中...")
+    task_label.config(text="正在分离音频...")
     threading.Thread(
       target=worker,
       args=(input_path,),
-      daemon=True
+      daemon=False
     ).start()
     window.after(100,check_task)
   
   demo_button = ttk.Button(
     window,
-    text="模拟耗时任务",
+    text="开始分离",
     command=start_demo
   )
   demo_button.pack(pady=8)

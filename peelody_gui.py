@@ -9,7 +9,7 @@ from queue import Queue,Empty
 def main():
   window = tk.Tk()
   window.title("Peelody V1.1")
-  window.geometry("500x420")
+  window.geometry("580x540")
   title_label = ttk.Label(
     window,
     text="Peelody Audio Separator",
@@ -24,6 +24,7 @@ def main():
   status_label.pack(pady=10)
 
   selected_audio_path = tk.StringVar(value="")
+  selected_output_dir = tk.StringVar(value="")
   task_running = tk.BooleanVar(value=False)
   
   def choose_audio():
@@ -46,6 +47,30 @@ def main():
     command=choose_audio
   )
   ttk_button.pack(pady=10)
+
+  output_label = ttk.Label(
+    window,
+    text="输出目录：默认 outputs",
+    wraplength=430
+  )
+  output_label.pack(pady=5)
+
+  def choose_output_dir():
+    folder = filedialog.askdirectory(
+      parent=window,
+      title="选择输出目录"
+    )
+    
+    if folder:
+      selected_output_dir.set(folder)
+      output_label.config(text=Path(folder).name)
+
+  output_button=ttk.Button(
+    window,
+    text="选择输出目录",
+    command=choose_output_dir
+  )
+  output_button.pack(pady=5)
   
   def prepare_separation():
     audio_arg = selected_audio_path.get()

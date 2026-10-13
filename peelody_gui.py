@@ -111,9 +111,9 @@ def main():
   )
   task_label.pack(pady=8)
   
-  def worker(input_path):
+  def worker(input_path,custom_output_dir):
     try:
-      result_dir = run_separation(input_path,None)
+      result_dir = run_separation(input_path,custom_output_dir)
     except Exception as error:
       task_queue.put(("error",str(error)))
     else:
@@ -130,9 +130,12 @@ def main():
     elif result_type=="error":
       task_label.config(text=f"分离失败:{message}")
     task_running.set(False)
+    
     ttk_button.config(state="normal")
     check_button.config(state="normal")
     demo_button.config(state="normal")
+    output_button.config(state="normal")
+    reset_output_button.config(state="normal")
 
   def start_demo():
     audio_arg = selected_audio_path.get()
@@ -144,16 +147,29 @@ def main():
     except (FileNotFoundError,ValueError) as error:
       task_label.config(text=f"Error: {error}")
       return
+    output_text = selected_output_dir.get()
+
+    if output_text:
+      custom_output_dir = Path(output_text)
+    else:
+      custom_output_dir = None
+    
     task_running.set(True)
+    
     ttk_button.config(state="disabled")
     check_button.config(state="disabled")
     demo_button.config(state="disabled")
+    output_button.config(state="disabled")
+    reset_output_button.config(state="disabled")
+    
     task_label.config(text="正在分离音频...")
+    
     threading.Thread(
       target=worker,
-      args=(input_path,),
+      args=(input_path,custom_output_dir),
       daemon=False
     ).start()
+    
     window.after(100,check_task)
   
   demo_button = ttk.Button(

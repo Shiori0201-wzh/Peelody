@@ -1,3 +1,4 @@
+import os
 from peelody import validate_input,run_separation
 from pathlib import Path
 import tkinter as tk
@@ -25,6 +26,7 @@ def main():
 
   selected_audio_path = tk.StringVar(value="")
   selected_output_dir = tk.StringVar(value="")
+  last_result_dir = tk.StringVar(value="")
   task_running = tk.BooleanVar(value=False)
   
   def choose_audio():
@@ -127,8 +129,12 @@ def main():
       return
     if result_type=="success":
       task_label.config(text=f"分离完成 输出目录为:{message}")
+      last_result_dir.set(message)
+      result_dir_button.config(state="normal")
     elif result_type=="error":
       task_label.config(text=f"分离失败:{message}")
+      last_result_dir.set("")
+      result_dir_button.config(state="disabled")
     task_running.set(False)
     
     ttk_button.config(state="normal")
@@ -161,6 +167,8 @@ def main():
     demo_button.config(state="disabled")
     output_button.config(state="disabled")
     reset_output_button.config(state="disabled")
+    last_result_dir.set("")
+    result_dir_button.config(state="disabled")
     
     task_label.config(text="正在分离音频...")
     
@@ -179,6 +187,26 @@ def main():
   )
   demo_button.pack(pady=8)
 
+  def open_result_dir():
+    folder = last_result_dir.get()
+    if not folder:
+      return
+    if(Path(folder).is_dir()):
+      os.startfile(folder)
+    else:
+      meaasgebox.showerror(
+        "目录不存在",
+        f"找不到结果目录:\n{folder}",
+        parent=window
+      )
+
+  result_dir_button = ttk.Button(
+    window,
+    text="打开结果目录",
+    command=open_result_dir,
+    state="disabled"
+  )
+  result_dir_button.pack(pady=5)
   def on_close():
     if task_running.get():
       messagebox.showwarning(

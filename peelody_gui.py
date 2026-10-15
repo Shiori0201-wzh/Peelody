@@ -194,7 +194,7 @@ def main():
     if(Path(folder).is_dir()):
       os.startfile(folder)
     else:
-      meaasgebox.showerror(
+      messagebox.showerror(
         "目录不存在",
         f"找不到结果目录:\n{folder}",
         parent=window

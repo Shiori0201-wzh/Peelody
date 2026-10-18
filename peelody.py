@@ -13,7 +13,9 @@ def validate_input(audio_arg):
         raise ValueError("Peelody V1 only supports WAV and MP3.")
     return input_path
 
-def run_separation(input_path,custom_output_dir):
+def run_separation(input_path, custom_output_dir, model_name="htdemucs"):
+    if model_name not in {"htdemucs", "htdemucs_ft"}:
+        raise ValueError(f"Unsupported model: {model_name}")
     project_dir = Path(__file__).resolve().parent
     
     track_name = input_path.parent.name
@@ -29,7 +31,7 @@ def run_separation(input_path,custom_output_dir):
         "-m",
         "demucs",
         "-n",
-        "htdemucs",
+        model_name,
         "-d",
         "cuda",
         "-o",
@@ -46,7 +48,7 @@ def run_separation(input_path,custom_output_dir):
     except subprocess.CalledProcessError as error:
         raise RuntimeError("audio separation failed.") from error
 
-    result_dir = output_dir / "htdemucs" / input_path.stem
+    result_dir = output_dir / model_name / input_path.stem
     return  result_dir
 
 

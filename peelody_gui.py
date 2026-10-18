@@ -11,10 +11,11 @@ from peelody import validate_input, run_separation
 def main():
   window = tk.Tk()
   window.title("Peelody V1.1")
-  window.geometry("580x540")
+  window.geometry("580x610")
  
   selected_audio_path = tk.StringVar(value="")
   selected_output_dir = tk.StringVar(value="")
+  selected_model = tk.StringVar(value="htdemucs")
   last_result_dir = tk.StringVar(value="")
   task_running = tk.BooleanVar(value=False)
 
@@ -194,6 +195,21 @@ def main():
     command=restore_default_output
   )
   reset_output_button.pack(pady=5)
+
+  model_label = ttk.Label(
+    window,
+    text="分离模型"
+  )
+  model_label.pack(pady=5)
+
+  model_selector = ttk.Combobox(
+    window,
+    textvariable=selected_model,
+    values=("htdemucs","htdemucs_ft"),
+    state="readonly",
+    width=22
+  )
+  model_selector.pack(pady=5)
   
   check_button = ttk.Button(
     window,

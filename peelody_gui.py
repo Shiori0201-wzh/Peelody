@@ -63,9 +63,9 @@ def main():
       status_label.config(text=f"输入检查通过:{input_path.name}")
 
 
-  def separation_worker(input_path,custom_output_dir):
+  def separation_worker(input_path,custom_output_dir,model_name):
     try:
-      result_dir = run_separation(input_path,custom_output_dir)
+      result_dir = run_separation(input_path,custom_output_dir,model_name)
     except Exception as error:
       task_queue.put(("error",str(error)))
     else:
@@ -92,6 +92,7 @@ def main():
     start_button.config(state="normal")
     output_button.config(state="normal")
     reset_output_button.config(state="normal")
+    model_selector.config(state="readonly")
 
   def start_separation():
     audio_arg = selected_audio_path.get()
@@ -103,13 +104,14 @@ def main():
     except (FileNotFoundError,ValueError) as error:
       task_label.config(text=f"Error: {error}")
       return
-    output_text = selected_output_dir.get()
 
+    output_text = selected_output_dir.get()
     if output_text:
       custom_output_dir = Path(output_text)
     else:
       custom_output_dir = None
-    
+
+    model_name = selected_model.get()
     task_running.set(True)
     
     choose_audio_button.config(state="disabled")
@@ -119,12 +121,13 @@ def main():
     reset_output_button.config(state="disabled")
     last_result_dir.set("")
     result_dir_button.config(state="disabled")
+    model_selector.config(state="disabled")
     
     task_label.config(text="正在分离音频...")
     
     threading.Thread(
       target=separation_worker,
-      args=(input_path,custom_output_dir),
+      args=(input_path,custom_output_dir,model_name),
       daemon=False
     ).start()
     

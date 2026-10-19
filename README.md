@@ -34,15 +34,17 @@ better results for every song or instrument.
 
 ## Tested Environment
 
-  Component                      Tested configuration
-  ------------------------------ ------------------------------------------
-  Operating system               Windows 11, 64-bit
-  Python                         3.13.6
-  GPU                            NVIDIA GeForce RTX 5060 Laptop GPU, 8 GB
-  PyTorch                        2.14.0+cu132
-  CUDA runtime used by PyTorch   13.2
-  Demucs                         4.1.0
-  NumPy                          2.5.3
+ 
+| Component | Tested configuration |
+|---|---|
+| Operating system | Windows 11, 64-bit |
+| Python | 3.13.6 |
+| GPU | NVIDIA GeForce RTX 5060 Laptop GPU, 8 GB |
+| PyTorch | 2.14.0+cu132 |
+| CUDA runtime used by PyTorch | 13.2 |
+| Demucs | 4.1.0 |
+| NumPy | 2.5.3 |
+
 
 These are the versions recorded for the tested development environment.
 Other environments may require compatible Python, PyTorch, CUDA, and
@@ -243,18 +245,26 @@ The following values are the SI-SDR difference of `htdemucs_ft` relative
 to `htdemucs`, in dB. Positive values indicate a higher score; negative
 values indicate a lower score.
 
-  Stem              Al James   AM Contra, first run   AM Contra, repeated run
-  --------------- ---------- ---------------------- -------------------------
-  Vocals               +0.09                  +0.28                     +0.14
-  Drums                +0.43                  -0.27                     -0.21
-  Bass                 -0.35                  +0.17                     +0.25
-  Other                +0.18                  +2.96                     +2.31
-  Other (0--3s)        -0.01                  +4.27                     +3.84
 
-One runtime test on the 7-second AM Contra excerpt measured 5.53 seconds
-for `htdemucs` and 7.86 seconds for `htdemucs_ft` (about 42% longer in
-that run). The measurement includes Python startup, model loading, and
-separation, so it is not a general benchmark.
+| Stem | Al James | AM Contra, first run | AM Contra, repeated run |
+|---|---:|---:|---:|
+| Vocals | +0.09 | +0.28 | +0.14 |
+| Drums | +0.43 | -0.27 | -0.21 |
+| Bass | -0.35 | +0.17 | +0.25 |
+| Other | +0.18 | +2.96 | +2.31 |
+| Other (0–3s) | -0.01 | +4.27 | +3.84 |
+
+
+### Runtime comparison
+
+One timing experiment on the 7-second AM Contra excerpt produced these results:
+
+| Model | Measured elapsed time |
+|---|---:|
+| `htdemucs` | 5.53 seconds |
+| `htdemucs_ft` | 7.86 seconds |
+
+The fine-tuned model took approximately 42% longer in this run. These measurements include Python startup, model loading, and separation, so they are not a general performance benchmark.
 
 ### Limitations
 

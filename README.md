@@ -353,4 +353,49 @@ The following table reports the SI-SDR change of `htdemucs_ft` relative to `htde
 | Vocals | +0.09 | +0.28 | +0.14 |
 | Drums | +0.43 | -0.27 | -0.21 |
 | Bass | -0.35 | +0.17 | +0.25 |
-| Other | +0.18 | +2.
+| Other | +0.18 | +2.96 | +2.31 |
+| Other (0–3s) | -0.01 | +4.27 | +3.84 |
+
+These values represent the SI-SDR difference between `htdemucs_ft` and `htdemucs`. Positive values indicate a higher SI-SDR score; negative values indicate a lower score.
+
+The results are exploratory and should not be interpreted as a guarantee of improvement across all audio.
+
+### Runtime comparison
+
+One timing experiment on the 7-second AM Contra excerpt produced the following results:
+
+| Model | Measured elapsed time |
+|---|---:|
+| `htdemucs` | 5.53 seconds |
+| `htdemucs_ft` | 7.86 seconds |
+
+The fine-tuned model took approximately 42% longer in this particular run.
+
+These timings include Python process startup, model loading, and separation. They are not a general performance benchmark, and the ratio may differ for longer audio or other hardware.
+
+### Evaluation limitations
+
+The current evaluation has several limitations:
+
+- Only two 7-second excerpts were tested.
+- The number of repeated experiments is limited.
+- Demucs time-shift inference can introduce run-to-run variation.
+- The SI-SDR implementation averages results calculated separately for the two stereo channels.
+- The evaluation did not perform sample-level time-offset correction.
+- Subjective listening and SI-SDR do not always agree.
+- The results do not establish performance across full songs, diverse genres, or all instruments.
+
+For the complete experiment record, see [V11_MODEL_EVALUATION.md](V11_MODEL_EVALUATION.md).
+
+### Model selection decision
+
+Peelody V1.1 retains a two-model strategy:
+
+- **Standard model:** `htdemucs`, selected by default.
+- **Optional fine-tuned model:** `htdemucs_ft`, selectable in the GUI.
+
+The standard model remains the default because it is the established baseline and was faster in the measured short-audio experiment.
+
+The fine-tuned model is available as an alternative for users who want to compare its results. It improved the perceived `other` stem in the tested excerpts, but results for `drums` and `bass` varied.
+
+The current CLI

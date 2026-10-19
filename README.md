@@ -1,56 +1,43 @@
-# Peelody
-
-**Peelody** is a local music source separation application built with Python and [Demucs](https://github.com/adefossez/demucs).
-
-Peelody V1.1 provides both a command-line interface (CLI) and a graphical user interface (GUI). It accepts WAV and MP3 audio and separates a mixed track into four stems:
-
-- `vocals.wav` — vocals
-- `drums.wav` — drums and percussion
-- `bass.wav` — bass
-- `other.wav` — other musical components
-
-The application runs source separation locally using a compatible NVIDIA GPU and CUDA-enabled PyTorch.
-
-## Features
-
-- **Four-stem separation** using pretrained Demucs models.
-- **WAV and MP3 input** with file existence and extension validation.
-- **Two model options in the GUI:**
-  - `htdemucs` — the default standard model.
-  - `htdemucs_ft` — an optional fine-tuned model.
-- **CUDA acceleration** for local GPU inference.
-- **Command-line interface** for scripted or terminal-based use.
-- **Tkinter GUI** for interactive audio selection and separation.
-- **Background task execution** to keep the GUI responsive during separation.
-- **Task status and error reporting** through the GUI.
-- **Default and custom output directories.**
-- **One-click access** to the generated result directory.
-- **Output organization** that helps prevent collisions between different inputs with the same filename.
-
-The GUI uses `htdemucs` by default. Users can select `htdemucs_ft` when they want to try the fine-tuned model. The fine-tuned model may improve some stems but does not guarantee better results for every song or instrument.
-
-## Tested Environment
-
-The development and testing environment includes:
-
-| Component | Tested configuration |
-|---|---|
-| Operating system | Windows 11, 64-bit |
-| Python | 3.13.6 |
-| GPU | NVIDIA GeForce RTX 5060 Laptop GPU, 8 GB |
-| PyTorch | 2.14.0+cu132 |
-| CUDA runtime used by PyTorch | 13.2 |
-| Demucs | 4.1.0 |
-| NumPy | 2.5.3 |
-| Virtual environment | `.venv/` |
-
-These are the versions recorded for the tested development environment. Other environments may require adjustments to Python, PyTorch, CUDA, or package versions.
-
-The current separation implementation explicitly selects CUDA. A compatible NVIDIA GPU and working CUDA-enabled PyTorch installation are therefore required for the tested workflow.
-
-## Project Structure
-
-```text
+Peelody
+Peelody is a local music source separation application built with Python
+and Demucs.
+Peelody V1.1 provides a command-line interface (CLI) and a Tkinter
+graphical user interface (GUI). It accepts WAV and MP3 audio and
+separates a mixed track into four stems:
+- vocals.wav --- vocals
+- drums.wav --- drums and percussion
+- bass.wav --- bass
+- other.wav --- other musical components
+Separation runs locally using a compatible NVIDIA GPU and CUDA-enabled
+PyTorch.
+Features
+- Four-stem source separation.
+- WAV and MP3 input validation.
+- Two model options in the GUI: htdemucs (standard, default) and
+  htdemucs_ft (optional fine-tuned model).
+- CUDA acceleration.
+- CLI support for terminal-based use.
+- Tkinter GUI with background task execution, status reporting, and
+  error handling.
+- Default or custom output directory.
+- One-click opening of the result directory.
+- Organized output paths to help avoid filename collisions.
+The fine-tuned model may improve some stems, but it does not guarantee
+better results for every song or instrument.
+Tested Environment
+  Component                      Tested configuration
+  Operating system               Windows 11, 64-bit
+  Python                         3.13.6
+  GPU                            NVIDIA GeForce RTX 5060 Laptop GPU, 8 GB
+  PyTorch                        2.14.0+cu132
+  CUDA runtime used by PyTorch   13.2
+  Demucs                         4.1.0
+  NumPy                          2.5.3
+These are the versions recorded for the tested development environment.
+Other environments may require compatible Python, PyTorch, CUDA, and
+package versions. The current separation implementation explicitly
+selects CUDA.
+Project Structure
 Peelody/
 ├── .gitignore
 ├── LICENSE
@@ -64,199 +51,67 @@ Peelody/
 ├── check_outputs.py
 ├── env_check.py
 └── inspect_wav.py
-```
-
-Important files:
-
-| File | Purpose |
-|---|---|
-| `peelody.py` | Core separation logic and CLI entry point |
-| `peelody_gui.py` | Tkinter graphical interface |
-| `requirements.txt` | Pinned Python dependency versions |
-| `TEST_RECORD.md` | Verified functional and regression tests |
-| `V11_MODEL_EVALUATION.md` | V1.1 model comparison and quality evaluation |
-| `SOURCES.md` | Third-party source and license notes |
-| `check_outputs.py` | Output validation helper |
-| `env_check.py` | Python environment inspection helper |
-| `inspect_wav.py` | WAV file property inspection helper |
-| `LICENSE` | MIT license for the Peelody source code |
-
-The following local directories are intentionally excluded from Git:
-
-```text
-.venv/
-samples/
-outputs/
-```
-
-They contain the local virtual environment, test material, and generated separation results, respectively.
-
-## Installation
-
-### 1. Clone the repository
-
-```powershell
+- peelody.py: core separation logic and CLI entry point.
+- peelody_gui.py: Tkinter graphical interface.
+- requirements.txt: pinned Python dependencies.
+- TEST_RECORD.md: functional and regression test record.
+- V11_MODEL_EVALUATION.md: V1.1 model comparison and quality
+  evaluation.
+- SOURCES.md: third-party source and license notes.
+The local .venv/, samples/, and outputs/ directories are excluded
+from Git. They contain the virtual environment, test audio, and
+generated results.
+Installation
+1. Clone the repository
 git clone https://github.com/Shiori0201-wzh/Peelody.git
 cd Peelody
-```
-
-If the repository has already been cloned, enter the existing project directory instead.
-
-### 2. Create a virtual environment
-
+2. Create a virtual environment
 The recorded development environment uses Python 3.13.6.
-
-```powershell
 py -3.13 -m venv .venv
-```
-
-### 3. Install dependencies
-
-The dependency file pins the versions used in the tested environment.
-
-```powershell
+3. Install dependencies
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu132
-```
-
-Installation may take some time because PyTorch and its CUDA-enabled packages are large.
-
-If package installation fails, check the Python version, package availability, network connection, and compatibility of the requested PyTorch build before changing the pinned dependencies.
-
-### 4. Verify GPU availability
-
-Run:
-
-```powershell
+4. Verify GPU availability
 .\.venv\Scripts\python.exe -c "import torch; print(torch.cuda.is_available()); print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CUDA unavailable')"
-```
-
-The tested machine returned a result similar to:
-
-```text
-True
-NVIDIA GeForce RTX 5060 Laptop GPU
-```
-
-If CUDA is unavailable, the current GPU separation workflow may fail. Verify the NVIDIA driver and PyTorch installation before running Peelody.
-
-## Run the CLI
-
-The CLI currently supports two command forms.
-
-### Default output directory
-
-```powershell
+The tested machine returned True and
+NVIDIA GeForce RTX 5060 Laptop GPU. If CUDA is unavailable, verify the
+NVIDIA driver and PyTorch installation.
+Run the CLI
+The CLI currently uses htdemucs by default and does not expose a
+separate model-selection argument.
+Default output directory
 .\.venv\Scripts\python.exe peelody.py ".\samples\example.wav"
-```
-
-When no custom output directory is provided, results are stored under the project's `outputs/` directory.
-
-### Custom output directory
-
-```powershell
+Results are stored under the project's outputs/ directory.
+Custom output directory
 .\.venv\Scripts\python.exe peelody.py ".\samples\example.wav" ".\my_results"
-```
-
-The second argument specifies the output root directory. It is optional and is interpreted relative to the current working directory when a relative path is supplied.
-
-**CLI model selection:** the current CLI uses `htdemucs` by default. Selecting `htdemucs_ft` is currently supported through the GUI, not through a separate CLI model argument.
-
-### CLI output
-
-A successful run produces terminal output similar to:
-
-```text
+The second argument is optional. Relative paths are interpreted relative
+to the current working directory.
+A successful run produces output similar to:
 Input accepted: ...
 Starting separation...
 Separation finished.
 Output directory: ...
-```
-
-If input validation or separation fails, the program prints an error and exits with a nonzero status.
-
-## Run the GUI
-
-Start the graphical interface with:
-
-```powershell
+Run the GUI
 .\.venv\Scripts\python.exe peelody_gui.py
-```
-
-The GUI supports the following workflow:
-
-1. Select a WAV or MP3 input file.
-2. Choose the default output directory or specify a custom output root.
-3. Select the separation model.
-4. Optionally check the input file.
-5. Start separation.
-6. Wait for the task result.
-7. Open the result directory when separation succeeds.
-
-### Model selection
-
-The GUI provides two options:
-
-| Model | Description |
-|---|---|
-| `htdemucs` | Standard model; selected by default |
-| `htdemucs_ft` | Fine-tuned model; optional alternative |
-
-The selected model is passed from the GUI to the background worker and then to the shared separation function.
-
-The model selector and relevant controls are disabled while a task is running. Task results are communicated back to the GUI through a thread-safe queue, and GUI widgets are updated by the main thread.
-
-The application also prevents the user from closing the window through the normal window-close action while a separation task is running.
-
-### Output directory controls
-
-- **Choose output directory:** selects a custom output root.
-- **Restore default:** clears the custom output setting and returns to the default `outputs/` root.
-- **Open result directory:** opens the actual result folder after a successful task.
-
-The output root selected by the user is different from the final result directory returned after separation.
-
-## Output Structure
-
-Peelody builds a job directory using the input file's parent directory name and filename stem:
-
-```text
-<parent folder name> - <input filename without extension>
-```
-
-For example, an input at:
-
-```text
-samples\example.wav
-```
-
-produces a job directory named:
-
-```text
-samples - example
-```
-
-With the default model and default output root, the output structure is:
-
-```text
-outputs/
-└── samples - example/
-    └── htdemucs/
-        └── example/
-            ├── bass.wav
-            ├── drums.wav
-            ├── other.wav
-            └── vocals.wav
-```
-
-When the GUI uses `htdemucs_ft`, the model directory becomes:
-
-```text
-htdemucs_ft/
-```
-
-The full path therefore follows this pattern:
-
-```text
+The GUI lets users select an input file, choose a default or custom
+output directory, select a model, check the input, start separation,
+view the task result, and open the result directory.
+  Model           Description
+  htdemucs      Standard model; selected by default
+  htdemucs_ft   Optional fine-tuned model
+The GUI passes the selected model to the background worker and shared
+separation function. Relevant controls are disabled while a task is
+running. Task results are returned through a thread-safe queue, and GUI
+widgets are updated by the main thread. The normal window-close action
+is blocked while separation is running.
+Output directory controls
+- Choose output directory: selects a custom output root.
+- Restore default: clears the custom path and returns to the
+  default outputs/ root.
+- Open result directory: opens the actual result folder after a
+  successful task.
+Output Structure
+Peelody creates a job name from the input's parent folder and filename
+stem. For example, samples\\example.wav produces samples - example.
 <output root>/
 └── <job name>/
     └── <model name>/
@@ -265,137 +120,112 @@ The full path therefore follows this pattern:
             ├── drums.wav
             ├── other.wav
             └── vocals.wav
-```
-
-When a custom output root is supplied, only the output root changes. The job name, model directory, and final stem directory retain the same organization.
-
-Including the input's parent folder name in the job name helps avoid collisions between different songs that share a filename such as `mixture.wav`.
-
-## Input Validation and Error Handling
-
-Peelody currently accepts:
-
-```text
-.wav
-.mp3
-```
-
-The validation step checks that the input file exists and has a supported extension.
-
-### Missing input file
-
-Example:
-
-```powershell
-.\.venv\Scripts\python.exe peelody.py ".\samples\missing.wav"
-```
-
-Expected error:
-
-```text
+The model directory is htdemucs/ or htdemucs_ft/, depending on the
+selected model. Including the input's parent folder in the job name
+helps avoid collisions between inputs with the same filename.
+Input Validation and Error Handling
+Supported extensions are .wav and .mp3. Peelody checks that the
+input exists and has a supported extension before starting separation.
+Missing input:
 Error: input file does not exist.
-```
-
-### Unsupported extension
-
-Example:
-
-```powershell
-.\.venv\Scripts\python.exe peelody.py ".\README.md"
-```
-
-Expected error:
-
-```text
+Unsupported extension:
 Error: Peelody V1 only supports WAV and MP3.
-```
-
-### Separation failure
-
-A file may exist and have a supported extension but still contain invalid or unreadable audio.
-
-In this case, Peelody reports:
-
-```text
+If a file exists and has a supported extension but cannot be processed,
+the CLI reports:
 Input accepted: ...
 Starting separation...
 Error: audio separation failed.
-```
-
-The core function wraps a failed Demucs subprocess execution in a `RuntimeError`. The CLI catches the error, prints a concise message, and exits with status code `1`.
-
-The GUI catches task exceptions in the worker, sends an error result through the queue, and displays the failure message.
-
-The simplified CLI output suppresses Demucs standard output and standard error during normal execution. This keeps routine output concise but also means detailed Demucs diagnostics are not displayed by default.
-
-## Model Evaluation
-
-V1.1 includes exploratory comparisons between `htdemucs` and `htdemucs_ft` using two 7-second excerpts from MUSDB18-7-WAV:
-
+The CLI exits with status code 1 on validation or separation failure.
+Demucs standard output and standard error are suppressed during normal
+CLI execution, so detailed internal diagnostics are not shown by
+default. The GUI reports task failures in its status area.
+Model Evaluation
+V1.1 includes exploratory comparisons between htdemucs and
+htdemucs_ft using two 7-second MUSDB18-7-WAV excerpts:
 - Al James - Schoolboy Facination
 - AM Contra - Heart Peripheral
-
-The evaluation used subjective A/B listening, SI-SDR comparisons, a repeated experiment on one excerpt, and a limited runtime comparison.
-
-### Main observations
-
-- The fine-tuned model improved the perceived continuity and recovery of some sounds in the `other` stem on both tested excerpts.
-- SI-SDR results for `other` improved in both excerpts.
-- The `drums` and `bass` results varied between excerpts. Improvements to one stem did not guarantee improvements to all other stems.
-- `htdemucs` with `--shifts 2` produced only small SI-SDR gains in the tested excerpt, with no obvious subjective improvement.
-
-### SI-SDR changes
-
-The following table reports the SI-SDR change of `htdemucs_ft` relative to `htdemucs`, in dB.
-
-| Stem | Al James | AM Contra, first run | AM Contra, repeated run |
-|---|---:|---:|---:|
-| Vocals | +0.09 | +0.28 | +0.14 |
-| Drums | +0.43 | -0.27 | -0.21 |
-| Bass | -0.35 | +0.17 | +0.25 |
-| Other | +0.18 | +2.96 | +2.31 |
-| Other (0–3s) | -0.01 | +4.27 | +3.84 |
-
-These values represent the SI-SDR difference between `htdemucs_ft` and `htdemucs`. Positive values indicate a higher SI-SDR score; negative values indicate a lower score.
-
-The results are exploratory and should not be interpreted as a guarantee of improvement across all audio.
-
-### Runtime comparison
-
-One timing experiment on the 7-second AM Contra excerpt produced the following results:
-
-| Model | Measured elapsed time |
-|---|---:|
-| `htdemucs` | 5.53 seconds |
-| `htdemucs_ft` | 7.86 seconds |
-
-The fine-tuned model took approximately 42% longer in this particular run.
-
-These timings include Python process startup, model loading, and separation. They are not a general performance benchmark, and the ratio may differ for longer audio or other hardware.
-
-### Evaluation limitations
-
-The current evaluation has several limitations:
-
+Subjective A/B listening found that the fine-tuned model improved the
+perceived continuity and recovery of some sounds in the other stem on
+both excerpts. Results for drums and bass varied. htdemucs with
+--shifts 2 showed only small SI-SDR gains in the tested excerpt, with
+no obvious subjective improvement.
+SI-SDR change
+The following values are the SI-SDR difference of htdemucs_ft relative
+to htdemucs, in dB. Positive values indicate a higher score; negative
+values indicate a lower score.
+  Stem              Al James   AM Contra, first run   AM Contra, repeated run
+  Vocals               +0.09                  +0.28                     +0.14
+  Drums                +0.43                  -0.27                     -0.21
+  Bass                 -0.35                  +0.17                     +0.25
+  Other                +0.18                  +2.96                     +2.31
+  Other (0--3s)        -0.01                  +4.27                     +3.84
+One runtime test on the 7-second AM Contra excerpt measured 5.53 seconds
+for htdemucs and 7.86 seconds for htdemucs_ft (about 42% longer in
+that run). The measurement includes Python startup, model loading, and
+separation, so it is not a general benchmark.
+Limitations
 - Only two 7-second excerpts were tested.
-- The number of repeated experiments is limited.
-- Demucs time-shift inference can introduce run-to-run variation.
-- The SI-SDR implementation averages results calculated separately for the two stereo channels.
-- The evaluation did not perform sample-level time-offset correction.
+- Repeated experiments were limited, and time-shift inference can
+  cause run-to-run variation.
+- SI-SDR was calculated separately for the two stereo channels and the
+  resulting dB values were averaged.
+- Sample-level time-offset correction was not performed.
 - Subjective listening and SI-SDR do not always agree.
-- The results do not establish performance across full songs, diverse genres, or all instruments.
-
-For the complete experiment record, see [V11_MODEL_EVALUATION.md](V11_MODEL_EVALUATION.md).
-
-### Model selection decision
-
-Peelody V1.1 retains a two-model strategy:
-
-- **Standard model:** `htdemucs`, selected by default.
-- **Optional fine-tuned model:** `htdemucs_ft`, selectable in the GUI.
-
-The standard model remains the default because it is the established baseline and was faster in the measured short-audio experiment.
-
-The fine-tuned model is available as an alternative for users who want to compare its results. It improved the perceived `other` stem in the tested excerpts, but results for `drums` and `bass` varied.
-
-The current CLI
+- The results do not establish performance across full songs, diverse
+  genres, or all instruments.
+These are exploratory results, not a guarantee of improved quality. See
+[V11_MODEL_EVALUATION.md](V11_MODEL_EVALUATION.md) for the recorded
+experiments.
+Model selection decision
+The GUI provides two models:
+- Standard: htdemucs, selected by default.
+- Optional fine-tuned: htdemucs_ft.
+The standard model remains the default because it is the established
+baseline and was faster in the measured short-audio test. The fine-tuned
+model is an alternative, especially for users who want to compare the
+other stem. It is not universally superior. The CLI continues to use
+htdemucs and has no separate model-selection argument.
+Testing
+Tests performed during development include:
+- Valid WAV and MP3 input.
+- Missing file, unsupported extension, and broken WAV handling.
+- Four-stem output generation and basic output properties.
+- Default and custom output directories.
+- Different inputs sharing the same filename.
+- GUI file selection, model selection, task status, error reporting,
+  and result-directory opening.
+- Real GUI separation with both htdemucs and htdemucs_ft.
+- Control disabling and window responsiveness during a running task.
+- CLI compatibility with one-argument and two-argument command forms.
+- Mock tests for model parameter passing and rejection of unsupported
+  model names.
+- Python syntax checks using py_compile.
+See [TEST_RECORD.md](TEST_RECORD.md) for the functional test history and
+[V11_MODEL_EVALUATION.md](V11_MODEL_EVALUATION.md) for model evaluation
+details. These tests are not exhaustive across all systems and audio.
+Licensing and Third-Party Material
+Peelody's source code is provided under the MIT License in
+LICENSE.
+Third-party software, pretrained model weights, and test audio have
+separate licensing terms:
+- Demucs: the project records Demucs 4.1.0 and its MIT license in
+  [SOURCES.md](SOURCES.md).
+- Pretrained weights: do not assume the Demucs software license
+  automatically applies to the model weights. The recorded source
+  notes say the license for the HTDemucs weights was not clearly
+  specified on the model card. Re-check current terms before
+  redistribution.
+- MUSDB18-7-WAV: used locally for educational evaluation. The
+  project source notes identify restrictions on commercial use without
+  permission from the relevant copyright holders.
+- Input and output audio: users are responsible for the rights and
+  permissions applicable to their recordings and generated stems.
+Model weights, local test audio, and generated outputs are not included
+in this repository. See [SOURCES.md](SOURCES.md) for details.
+Current Status
+Peelody V1.1 provides a local four-stem separation workflow with a CLI,
+a Tkinter GUI, two selectable GUI models, custom output paths, input
+validation, background execution, and task-result reporting.
+The current quality evaluation is exploratory. The fine-tuned model is
+an optional alternative, not a universally superior replacement for the
+standard model.

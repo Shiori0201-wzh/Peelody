@@ -1,245 +1,241 @@
 # Peelody
 
-Peelody is a local audio source separation project developed with Python.
+**Peelody** is a local music source separation application built with Python and [Demucs](https://github.com/adefossez/demucs).
 
-Peelody V1 accepts WAV or MP3 audio and separates it into four tracks:
+Peelody V1.1 provides both a command-line interface (CLI) and a graphical user interface (GUI). It accepts WAV and MP3 audio and separates a mixed track into four stems:
 
-- vocals
-- drums
-- bass
-- other
+- `vocals.wav` — vocals
+- `drums.wav` — drums and percussion
+- `bass.wav` — bass
+- `other.wav` — other musical components
 
-The current version uses the pretrained `htdemucs` model from Demucs and performs separation locally with an NVIDIA CUDA GPU.
-
----
+The application runs source separation locally using a compatible NVIDIA GPU and CUDA-enabled PyTorch.
 
 ## Features
 
-Peelody V1 currently supports:
+- **Four-stem separation** using pretrained Demucs models.
+- **WAV and MP3 input** with file existence and extension validation.
+- **Two model options in the GUI:**
+  - `htdemucs` — the default standard model.
+  - `htdemucs_ft` — an optional fine-tuned model.
+- **CUDA acceleration** for local GPU inference.
+- **Command-line interface** for scripted or terminal-based use.
+- **Tkinter GUI** for interactive audio selection and separation.
+- **Background task execution** to keep the GUI responsive during separation.
+- **Task status and error reporting** through the GUI.
+- **Default and custom output directories.**
+- **One-click access** to the generated result directory.
+- **Output organization** that helps prevent collisions between different inputs with the same filename.
 
-- WAV input
-- MP3 input
-- Four-track source separation
-  - `vocals.wav`
-  - `drums.wav`
-  - `bass.wav`
-  - `other.wav`
-- NVIDIA GPU acceleration through CUDA
-- Input file existence checking
-- Input extension checking
-- Broken audio handling
-- Default output directory
-- Optional custom output directory
-- Separate output folders for inputs with the same filename
-- Simplified terminal output
-- Fixed test records and dependency records
-
----
+The GUI uses `htdemucs` by default. Users can select `htdemucs_ft` when they want to try the fine-tuned model. The fine-tuned model may improve some stems but does not guarantee better results for every song or instrument.
 
 ## Tested Environment
 
-Peelody V1 has been tested in the following environment:
+The development and testing environment includes:
 
-- OS: Windows 11 64-bit
-- Python: 3.13.6
-- GPU: NVIDIA GeForce RTX 5060 Laptop GPU 8GB
-- PyTorch: 2.14.0+cu132
-- CUDA runtime used by PyTorch: 13.2
-- NumPy: 2.5.3
-- Demucs: 4.1.0
-- Separation model: `htdemucs`
+| Component | Tested configuration |
+|---|---|
+| Operating system | Windows 11, 64-bit |
+| Python | 3.13.6 |
+| GPU | NVIDIA GeForce RTX 5060 Laptop GPU, 8 GB |
+| PyTorch | 2.14.0+cu132 |
+| CUDA runtime used by PyTorch | 13.2 |
+| Demucs | 4.1.0 |
+| NumPy | 2.5.3 |
+| Virtual environment | `.venv/` |
 
-The current V1 explicitly uses CUDA for separation, so a compatible NVIDIA GPU is required.
+These are the versions recorded for the tested development environment. Other environments may require adjustments to Python, PyTorch, CUDA, or package versions.
 
----
+The current separation implementation explicitly selects CUDA. A compatible NVIDIA GPU and working CUDA-enabled PyTorch installation are therefore required for the tested workflow.
 
 ## Project Structure
 
-A typical Peelody project directory looks like this:
-
 ```text
 Peelody/
-├── .venv/
-├── outputs/
-├── samples/
 ├── .gitignore
+├── LICENSE
 ├── README.md
 ├── SOURCES.md
 ├── TEST_RECORD.md
+├── V11_MODEL_EVALUATION.md
 ├── requirements.txt
 ├── peelody.py
+├── peelody_gui.py
 ├── check_outputs.py
 ├── env_check.py
 └── inspect_wav.py
 ```
 
-Important notes:
+Important files:
 
-- `.venv/` contains the local Python virtual environment.
-- `samples/` contains local test audio and is not included in Git.
-- `outputs/` contains generated separated tracks and is not included in Git.
-- `peelody.py` is the main Peelody program.
-- `TEST_RECORD.md` contains verified test results.
-- `SOURCES.md` contains third-party source and license notes.
-- `requirements.txt` records the tested Python dependency versions.
+| File | Purpose |
+|---|---|
+| `peelody.py` | Core separation logic and CLI entry point |
+| `peelody_gui.py` | Tkinter graphical interface |
+| `requirements.txt` | Pinned Python dependency versions |
+| `TEST_RECORD.md` | Verified functional and regression tests |
+| `V11_MODEL_EVALUATION.md` | V1.1 model comparison and quality evaluation |
+| `SOURCES.md` | Third-party source and license notes |
+| `check_outputs.py` | Output validation helper |
+| `env_check.py` | Python environment inspection helper |
+| `inspect_wav.py` | WAV file property inspection helper |
+| `LICENSE` | MIT license for the Peelody source code |
 
----
+The following local directories are intentionally excluded from Git:
 
-## Setup
-
-### 1. Create a virtual environment
-
-Open PowerShell in the Peelody project directory:
-
-```powershell
-cd D:\Projects\Peelody
+```text
+.venv/
+samples/
+outputs/
 ```
 
-Create the virtual environment:
+They contain the local virtual environment, test material, and generated separation results, respectively.
+
+## Installation
+
+### 1. Clone the repository
+
+```powershell
+git clone https://github.com/Shiori0201-wzh/Peelody.git
+cd Peelody
+```
+
+If the repository has already been cloned, enter the existing project directory instead.
+
+### 2. Create a virtual environment
+
+The recorded development environment uses Python 3.13.6.
 
 ```powershell
 py -3.13 -m venv .venv
 ```
 
-### 2. Activate the virtual environment
+### 3. Install dependencies
+
+The dependency file pins the versions used in the tested environment.
 
 ```powershell
-.\.venv\Scripts\Activate.ps1
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu132
 ```
 
-After activation, the PowerShell prompt should contain:
+Installation may take some time because PyTorch and its CUDA-enabled packages are large.
 
-```text
-(.venv)
-```
+If package installation fails, check the Python version, package availability, network connection, and compatibility of the requested PyTorch build before changing the pinned dependencies.
 
-### 3. Install the tested dependencies
+### 4. Verify GPU availability
+
+Run:
 
 ```powershell
-python -m pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu132
+.\.venv\Scripts\python.exe -c "import torch; print(torch.cuda.is_available()); print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CUDA unavailable')"
 ```
 
-The tested environment includes:
-
-```text
-demucs==4.1.0
-numpy==2.5.3
-torch==2.14.0+cu132
-```
-
-`requirements.txt` also contains the indirect dependencies installed in the tested virtual environment.
-
----
-
-## Verify GPU Support
-
-Before running Peelody, verify that PyTorch can access the NVIDIA GPU:
-
-```powershell
-python -c "import torch; print(torch.cuda.is_available()); print(torch.cuda.get_device_name(0))"
-```
-
-The tested system produces output similar to:
+The tested machine returned a result similar to:
 
 ```text
 True
 NVIDIA GeForce RTX 5060 Laptop GPU
 ```
 
-If `torch.cuda.is_available()` returns `False`, the current Peelody V1 separation command will not work correctly because V1 explicitly uses CUDA.
+If CUDA is unavailable, the current GPU separation workflow may fail. Verify the NVIDIA driver and PyTorch installation before running Peelody.
 
----
+## Run the CLI
 
-## Run Peelody
-
-Peelody supports two command forms.
+The CLI currently supports two command forms.
 
 ### Default output directory
 
 ```powershell
-python peelody.py "<audio_file>"
+.\.venv\Scripts\python.exe peelody.py ".\samples\example.wav"
 ```
 
-Example:
-
-```powershell
-python peelody.py ".\samples\example.wav"
-```
-
-When no output directory is provided, Peelody stores the result under the project's:
-
-```text
-outputs\
-```
-
-directory.
-
----
+When no custom output directory is provided, results are stored under the project's `outputs/` directory.
 
 ### Custom output directory
 
-You can optionally provide a second argument:
-
 ```powershell
-python peelody.py "<audio_file>" "<output_dir>"
+.\.venv\Scripts\python.exe peelody.py ".\samples\example.wav" ".\my_results"
 ```
 
-Example:
+The second argument specifies the output root directory. It is optional and is interpreted relative to the current working directory when a relative path is supplied.
 
-```powershell
-python peelody.py ".\samples\example.wav" ".\my_results"
-```
+**CLI model selection:** the current CLI uses `htdemucs` by default. Selecting `htdemucs_ft` is currently supported through the GUI, not through a separate CLI model argument.
 
-In this case, Peelody stores the separated tracks under the specified output root instead of the default `outputs` directory.
+### CLI output
 
-If a relative custom output path is used, it is relative to the directory from which the command is executed.
-
----
-
-## Supported Input Formats
-
-Peelody V1 accepts:
+A successful run produces terminal output similar to:
 
 ```text
-.wav
-.mp3
+Input accepted: ...
+Starting separation...
+Separation finished.
+Output directory: ...
 ```
 
-Examples:
+If input validation or separation fails, the program prints an error and exits with a nonzero status.
+
+## Run the GUI
+
+Start the graphical interface with:
 
 ```powershell
-python peelody.py ".\samples\song.wav"
+.\.venv\Scripts\python.exe peelody_gui.py
 ```
 
-```powershell
-python peelody.py ".\samples\song.mp3"
-```
+The GUI supports the following workflow:
 
-Other file extensions are rejected before separation starts.
+1. Select a WAV or MP3 input file.
+2. Choose the default output directory or specify a custom output root.
+3. Select the separation model.
+4. Optionally check the input file.
+5. Start separation.
+6. Wait for the task result.
+7. Open the result directory when separation succeeds.
 
----
+### Model selection
+
+The GUI provides two options:
+
+| Model | Description |
+|---|---|
+| `htdemucs` | Standard model; selected by default |
+| `htdemucs_ft` | Fine-tuned model; optional alternative |
+
+The selected model is passed from the GUI to the background worker and then to the shared separation function.
+
+The model selector and relevant controls are disabled while a task is running. Task results are communicated back to the GUI through a thread-safe queue, and GUI widgets are updated by the main thread.
+
+The application also prevents the user from closing the window through the normal window-close action while a separation task is running.
+
+### Output directory controls
+
+- **Choose output directory:** selects a custom output root.
+- **Restore default:** clears the custom output setting and returns to the default `outputs/` root.
+- **Open result directory:** opens the actual result folder after a successful task.
+
+The output root selected by the user is different from the final result directory returned after separation.
 
 ## Output Structure
 
-Peelody creates a job directory using:
+Peelody builds a job directory using the input file's parent directory name and filename stem:
 
 ```text
-<input parent folder name> - <input filename without extension>
+<parent folder name> - <input filename without extension>
 ```
 
-For example, if the input is:
+For example, an input at:
 
 ```text
 samples\example.wav
 ```
 
-the job name becomes:
+produces a job directory named:
 
 ```text
 samples - example
 ```
 
-With the default output root, the result structure is approximately:
+With the default model and default output root, the output structure is:
 
 ```text
 outputs/
@@ -252,64 +248,49 @@ outputs/
             └── vocals.wav
 ```
 
-With a custom output root such as:
+When the GUI uses `htdemucs_ft`, the model directory becomes:
 
 ```text
-my_results
+htdemucs_ft/
 ```
 
-the result becomes approximately:
+The full path therefore follows this pattern:
 
 ```text
-my_results/
-└── samples - example/
-    └── htdemucs/
-        └── example/
+<output root>/
+└── <job name>/
+    └── <model name>/
+        └── <input filename stem>/
             ├── bass.wav
             ├── drums.wav
             ├── other.wav
             └── vocals.wav
 ```
 
-Using both the parent folder name and input filename helps prevent different files with the same filename from overwriting each other's results.
+When a custom output root is supplied, only the output root changes. The job name, model directory, and final stem directory retain the same organization.
 
----
+Including the input's parent folder name in the job name helps avoid collisions between different songs that share a filename such as `mixture.wav`.
 
-## Command-Line Usage
+## Input Validation and Error Handling
 
-If no audio file is provided, Peelody displays usage information.
-
-Valid forms:
+Peelody currently accepts:
 
 ```text
-python peelody.py <audio_file>
+.wav
+.mp3
 ```
 
-```text
-python peelody.py <audio_file> <output_dir>
-```
+The validation step checks that the input file exists and has a supported extension.
 
-`<audio_file>` is required.
-
-`<output_dir>` is optional.
-
-Too many command-line arguments are rejected.
-
----
-
-## Error Handling
-
-Peelody V1 currently handles several common errors.
-
-### Input file does not exist
+### Missing input file
 
 Example:
 
 ```powershell
-python peelody.py ".\samples\missing.wav"
+.\.venv\Scripts\python.exe peelody.py ".\samples\missing.wav"
 ```
 
-Result:
+Expected error:
 
 ```text
 Error: input file does not exist.
@@ -320,39 +301,20 @@ Error: input file does not exist.
 Example:
 
 ```powershell
-python peelody.py ".\example.txt"
+.\.venv\Scripts\python.exe peelody.py ".\README.md"
 ```
 
-Result:
+Expected error:
 
 ```text
 Error: Peelody V1 only supports WAV and MP3.
 ```
 
-### Broken or unreadable audio
+### Separation failure
 
-If a file exists and has a supported extension but cannot actually be processed as audio, Peelody reports:
+A file may exist and have a supported extension but still contain invalid or unreadable audio.
 
-```text
-Error: audio separation failed.
-```
-
-Demucs internal traceback output is hidden in normal Peelody V1 usage.
-
----
-
-## Terminal Output
-
-A normal successful run looks approximately like:
-
-```text
-Input accepted: ...
-Starting separation...
-Separation finished.
-Output directory: ...
-```
-
-A failed separation looks approximately like:
+In this case, Peelody reports:
 
 ```text
 Input accepted: ...
@@ -360,220 +322,35 @@ Starting separation...
 Error: audio separation failed.
 ```
 
-Peelody V1 intentionally hides the detailed Demucs terminal output to keep normal usage simple.
+The core function wraps a failed Demucs subprocess execution in a `RuntimeError`. The CLI catches the error, prints a concise message, and exits with status code `1`.
 
----
+The GUI catches task exceptions in the worker, sends an error result through the queue, and displays the failure message.
 
-## Model Download
+The simplified CLI output suppresses Demucs standard output and standard error during normal execution. This keeps routine output concise but also means detailed Demucs diagnostics are not displayed by default.
 
-The `htdemucs` pretrained model files are downloaded automatically when the model is used for the first time.
+## Model Evaluation
 
-Later runs can use the locally cached model files.
+V1.1 includes exploratory comparisons between `htdemucs` and `htdemucs_ft` using two 7-second excerpts from MUSDB18-7-WAV:
 
-Internet access may therefore be required during the first model download.
+- Al James - Schoolboy Facination
+- AM Contra - Heart Peripheral
 
----
+The evaluation used subjective A/B listening, SI-SDR comparisons, a repeated experiment on one excerpt, and a limited runtime comparison.
 
-## Testing
+### Main observations
 
-Peelody V1 has been tested with both WAV and MP3 input.
+- The fine-tuned model improved the perceived continuity and recovery of some sounds in the `other` stem on both tested excerpts.
+- SI-SDR results for `other` improved in both excerpts.
+- The `drums` and `bass` results varied between excerpts. Improvements to one stem did not guarantee improvements to all other stems.
+- `htdemucs` with `--shifts 2` produced only small SI-SDR gains in the tested excerpt, with no obvious subjective improvement.
 
-Testing includes:
+### SI-SDR changes
 
-- Valid WAV input
-- Valid MP3 input
-- Missing file
-- Unsupported file extension
-- Broken WAV file
-- Four-track output generation
-- Output file existence
-- Output channel count
-- Output sample rate
-- Output duration
-- Different inputs with the same filename
-- Default output directory
-- Custom output directory
-- No command-line arguments
-- Too many command-line arguments
+The following table reports the SI-SDR change of `htdemucs_ft` relative to `htdemucs`, in dB.
 
-Detailed verified test results are recorded in:
-
-```text
-TEST_RECORD.md
-```
-
----
-
-## Standard Test Material
-
-A short MUSDB18 / SiSEC18-MUS sample was used as fixed local test material.
-
-The tested standard sample includes Ground Truth tracks for:
-
-- vocals
-- drums
-- bass
-- other
-
-The test audio itself is not included in the Git repository.
-
-See:
-
-```text
-SOURCES.md
-```
-
-for source and license notes.
-
----
-
-## Current Quality Observations
-
-Current listening tests indicate:
-
-- `vocals.wav` can be close to the Ground Truth on the tested sample.
-- `bass.wav` showed no obvious major issue in the tested sample.
-- `drums.wav` preserved the main drum content, but the Ground Truth sounded richer.
-- `other.wav` showed the most obvious difference and had a somewhat discontinuous or stuttering artifact in the tested sample.
-
-These are subjective listening observations.
-
-No formal objective separation metric such as SDR or SI-SDR has been calculated yet.
-
-Therefore, Peelody does not currently claim a numerical separation accuracy.
-
----
-
-## Known Limitations
-
-Peelody V1 currently has several limitations:
-
-- Separation quality depends on the input audio.
-- The `other` stem can contain noticeable separation artifacts.
-- The model does not individually identify every instrument inside `other.wav`.
-- The current V1 always uses CUDA and does not provide a CPU fallback.
-- The current terminal interface does not display Demucs progress bars.
-- V1 supports WAV and MP3 only.
-- Objective source-separation metrics have not yet been integrated.
-- More detailed instrument categories such as guitar or piano are not part of the required V1 output.
-
----
-
-## Helper Scripts
-
-### `env_check.py`
-
-Used during environment verification.
-
-It helps confirm which Python interpreter is currently running.
-
-### `inspect_wav.py`
-
-Used to inspect basic WAV properties such as:
-
-- channels
-- sample rate
-- sample width
-- frame count
-- duration
-
-### `check_outputs.py`
-
-Used to check the generated output tracks, including:
-
-- file existence
-- channel count
-- sample rate
-- duration
-
-These scripts are helper and testing tools and are not part of the main separation flow.
-
----
-
-## Main Program Flow
-
-The simplified Peelody V1 data flow is:
-
-```text
-Command-line arguments
-        ↓
-main()
-        ↓
-validate_input()
-        ↓
-input_path
-        ↓
-run_separation()
-        ↓
-Demucs / htdemucs
-        ↓
-PyTorch + CUDA
-        ↓
-RTX GPU
-        ↓
-bass / drums / other / vocals
-        ↓
-result_dir
-```
-
-The main responsibilities are:
-
-- `main()` manages the overall execution order and optional output directory.
-- `validate_input()` checks the input file.
-- `run_separation()` runs Demucs and returns the result directory.
-
----
-
-## Dependency and License Notes
-
-Third-party source and license information is recorded separately in:
-
-```text
-SOURCES.md
-```
-
-Important distinctions are made between:
-
-- Peelody source code
-- Demucs software
-- HTDemucs pretrained weights
-- PyTorch
-- Test datasets
-- User-provided audio
-- Generated separated audio
-
-Do not assume that the license of one component automatically applies to another component.
-
----
-
-## Repository Policy
-
-The Git repository should contain source code and project documentation.
-
-The following are intentionally excluded:
-
-```text
-.venv/
-samples/
-outputs/
-```
-
-Test audio, generated separated tracks, and the local virtual environment should not be committed to the repository.
-
----
-
-## Project Status
-
-Peelody V1 currently provides a working local four-track audio separation workflow with:
-
-- WAV and MP3 input
-- NVIDIA GPU acceleration
-- four-track separation
-- input validation
-- basic error handling
-- stable output organization
-- optional custom output directory
-- fixed testing records
-- dependency records
-- source and license notes
-- Git-based version protection
+| Stem | Al James | AM Contra, first run | AM Contra, repeated run |
+|---|---:|---:|---:|
+| Vocals | +0.09 | +0.28 | +0.14 |
+| Drums | +0.43 | -0.27 | -0.21 |
+| Bass | -0.35 | +0.17 | +0.25 |
+| Other | +0.18 | +2.
